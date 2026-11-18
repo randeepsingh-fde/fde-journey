@@ -11,18 +11,24 @@ def main():
 def is_valid(s):
 
     # Condition 1: Length must be between 2 and 6
-    if len(s) < 2 or len(s) > 6:
+    if len(s) >= 2 and len(s) <= 6:
+        pass
+    else:
         return False
 
     # Condition 2: First two characters must be letters
-    if not s[0].isalpha() or not s[1].isalpha():
+    if s[0].isalpha() and s[1].isalpha():
+        pass
+    else:
         return False
 
-    # Condition 3: Only letters and numbers are allowed
-    if not s.isalnum():
+    # Condition 3: Only letters and numbers allowed
+    if s.isalnum():
+        pass
+    else:
         return False
 
-    # Conditions 4 and 5: Numbers must be at the end,
+    # Condition 4 and 5: Numbers must be at the end,
     # and the first number cannot be zero
     number_started = False
 
