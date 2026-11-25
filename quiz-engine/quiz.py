@@ -1,3 +1,5 @@
+import random
+
 question_list = [
     {
         "question": "1. Which gas makes up the largest percentage of Earth's atmosphere?",
@@ -281,57 +283,107 @@ question_list = [
     }
 ]
 
-#extract different categories from question_list and store them in set
-category_list = set()
-for i in range(len(question_list)):
-    category_list.add(question_list[i].get("category"))
-category_list = sorted(category_list) #sorting the category set
+while True:
+    #extract different categories from question_list and store them in set
+    category_list = set()
+    for i in range(len(question_list)):
+        category_list.add(question_list[i].get("category"))
+    category_list = sorted(category_list) #sorting the category set
 
-print("========== QUIZ CATEGORIES ==========")
-for i, category in enumerate(category_list, start=1): #prints the different categories with indexing using enumerate()
-    print(i, category)
-category_choice = int(input("Select a category: "))
-selected_category = category_list[category_choice-1] #because user's 1 is equal to python's 0
+    print("========== QUIZ CATEGORIES ==========")
+    for i, category in enumerate(category_list, start=1): #prints the different categories with indexing using enumerate()
+        print(i, category)
+    while True:
+        try:
+            category_choice = int(input("Select a category: "))
+            if 1 <= category_choice <= len(category_list):
+                break
+            else:
+                print("Category needs to be from the menu options")
+        except ValueError:
+            print("Please enter a valid number.")
+    selected_category = category_list[category_choice-1] #because user's 1 is equal to python's 0
 
-category_list1 = []
+    category_list1 = []
 
-# adds those questions to a new list called category_list1 which have the same category as the category chosen by the user
-for i in range(len(question_list)):
-    if question_list[i].get("category") == selected_category:
-        category_list1.append(question_list[i])
+    # adds those questions to a new list called category_list1 which have the same category as the category chosen by the user
+    for i in range(len(question_list)):
+        if question_list[i].get("category") == selected_category:
+            category_list1.append(question_list[i])
 
-#extracts different difficulty levels from the category_list1
-difficulty_list = set()
-for i in range(len(category_list1)):
-    difficulty_list.add(category_list1[i].get("difficulty"))
-difficulty_list = sorted(difficulty_list) # sorts the difficulty list
+    #extracts different difficulty levels from the category_list1
+    difficulty_list = set()
+    for i in range(len(category_list1)):
+        difficulty_list.add(category_list1[i].get("difficulty"))
+    difficulty_list = sorted(difficulty_list) # sorts the difficulty list
 
-for i, difficulty in enumerate(difficulty_list, start=1): #prints the difficulty levels with indexing using enumerate
-    print(i, difficulty)
+    for i, difficulty in enumerate(difficulty_list, start=1): #prints the difficulty levels with indexing using enumerate
+        print(i, difficulty)
+    while True:
+        try:
+            difficulty_choice = int(input("Select the difficulty: ")) #takes the user's input for difficulty level
+            if 1 <= difficulty_choice <= len(difficulty_list):
+                break
+            else:
+                print("Difficulty needs to be from the above list only.")
+        except ValueError:
+            print("Please enter a valid number.")
+    selected_difficulty = difficulty_list[difficulty_choice-1] #because user's 1 is equal to python's 0
 
-difficulty_choice = int(input("Select the difficulty: ")) #takes the user's input for difficulty level
-selected_difficulty = difficulty_list[difficulty_choice-1] #because user's 1 is equal to python's 0
+    # filters the already filtered category list by difficulty level and stores in a new list
+    filtered_questions = []
+    for i in range(len(category_list1)):
+        if category_list1[i].get("difficulty") == selected_difficulty:
+            filtered_questions.append(category_list1[i])
 
-# filters the already filtered category list by difficulty level and stores in a new list
-filtered_questions = []
-for i in range(len(category_list1)):
-    if category_list1[i].get("difficulty") == selected_difficulty:
-        filtered_questions.append(category_list1[i])
+    random.shuffle(filtered_questions)
 
-score = 0
+    score = 0
 
-for i in range(len(filtered_questions)):
-    print(filtered_questions[i].get("question"))
-    for j, option in enumerate(filtered_questions[i].get("options"), start=1):
-        print(j,option)
-    user_answer = int(input("Your answer: "))
-    if filtered_questions[i].get("options")[user_answer-1] == (filtered_questions[i].get("correct_answer")):
-        score = score+1
-        print("Correct")
-        print("Score:",score)
-    else:
-        print("Incorrect")
-        print("Correct Answer:", filtered_questions[i].get("correct_answer"))
-        print("Score:", score)
+    for i in range(len(filtered_questions)):
+        print(filtered_questions[i].get("question"))
+        for j, option in enumerate(filtered_questions[i].get("options"), start=1):
+            print(j,option)
+        while True:
+            try:
+                user_answer = int(input("Your answer: "))
+                if 1 <= user_answer <= 4:
+                    break
+                else:
+                    print("Enter a valid option as answer.")
+            except ValueError:
+                print("Answer has to be from 1, 2, 3, or 4.")
+        if filtered_questions[i].get("options")[user_answer-1] == (filtered_questions[i].get("correct_answer")):
+            score = score+1
+            print("Correct")
+            print("Score:",score)
+        else:
+            print("Incorrect")
+            print("Correct Answer:", filtered_questions[i].get("correct_answer"))
+            print("Score:", score)
 
-print("Final Score:", score)
+    print("\n")
+    print("========== QUIZ RESULTS ==========")
+    print("\n")
+    total_questions_played = len(filtered_questions)
+    print("Total Questions: ", total_questions_played)
+    print("Correct Answers:", score)
+    print("Incorrect Answers: ", (len(filtered_questions))-score)
+    print(f"Accuracy: {(score/total_questions_played)*100:.2f}%")
+    print("\n")
+
+    while True:
+        replay = input("Would you like to replay? (Y/N): ")
+        if replay.upper() == "N":
+            print("Thanks for Playing.")
+            should_replay = False
+            break
+        elif replay.upper() == "Y":
+            print("Let's start again.")
+            should_replay = True
+            break
+        else:
+            print("Enter either (Y/N).")
+
+    if should_replay is False:
+        break
