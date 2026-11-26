@@ -296,18 +296,20 @@ def display_categories(category_list):
         print(i, category)
 
 
-def select_category(category_list):
+def select_category(category_list, default_category= "General Knowledge"):
     display_categories(category_list)
     while True:
         try:
-            category_choice = int(input("Select a category: "))
-            if 1 <= category_choice <= len(category_list):
+            category_choice = input("Select a category: ")
+            if category_choice == "":
+                return default_category
+            elif 1 <= int(category_choice) <= len(category_list):
                 break
             else:
                 print("Category needs to be from the menu options.")
         except ValueError:
             print("Please enter a valid number.")
-    return category_list[category_choice - 1]
+    return category_list[int(category_choice) - 1]
 
 
 def get_questions_by_category(question_list, selected_category):
@@ -407,6 +409,20 @@ def ask_replay():
             print("Enter either (Y/N).")
 
 
+def count_questions_by_category(question_list, selected_category):
+    number_of_questions = 0
+    for i in range(len(question_list)):
+        if question_list[i].get("category") == selected_category:
+            number_of_questions = number_of_questions + 1
+    return number_of_questions
+
+
+def calculate_accuracy(total_questions, correct_answers):
+    if total_questions == 0:
+        return 0
+    accuracy = (correct_answers/total_questions)*100
+    return accuracy
+
 def main(question_list):
     while True:
         category_list = get_categories(question_list)
@@ -417,6 +433,8 @@ def main(question_list):
         filtered_questions = filter_questions(category_questions, selected_difficulty)
         score = play_quiz(filtered_questions)
         display_results(filtered_questions, score)
+        question_count = count_questions_by_category(question_list, selected_category)
+        accuracy = calculate_accuracy(len(filtered_questions), correct_answers=score)
         should_replay = ask_replay()
         if should_replay is False:
             break
