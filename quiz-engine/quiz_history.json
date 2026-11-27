@@ -1,0 +1,58 @@
+[
+    {
+        "category": "Geography",
+        "difficulty": "Easy",
+        "total_questions": 3,
+        "correct_answers": 3,
+        "accuracy": 100.0
+    },
+    {
+        "category": "Technology",
+        "difficulty": "Medium",
+        "total_questions": 4,
+        "correct_answers": 3,
+        "accuracy": 75.0
+    },
+    {
+        "category": "Geography",
+        "difficulty": "Easy",
+        "total_questions": 3,
+        "correct_answers": 2,
+        "accuracy": 66.66666666666666
+    },
+    {
+        "category": "General Knowledge",
+        "difficulty": "Easy",
+        "total_questions": 4,
+        "correct_answers": 0,
+        "accuracy": 0.0
+    },
+    {
+        "category": "General Knowledge",
+        "difficulty": "Easy",
+        "total_questions": 4,
+        "correct_answers": 0,
+        "accuracy": 0.0
+    },
+    {
+        "category": "Geography",
+        "difficulty": "Hard",
+        "total_questions": 3,
+        "correct_answers": 2,
+        "accuracy": 66.66666666666666
+    },
+    {
+        "category": "Science",
+        "difficulty": "Medium",
+        "total_questions": 4,
+        "correct_answers": 3,
+        "accuracy": 75.0
+    },
+    {
+        "category": "Technology",
+        "difficulty": "Hard",
+        "total_questions": 3,
+        "correct_answers": 0,
+        "accuracy": 0.0
+    }
+]

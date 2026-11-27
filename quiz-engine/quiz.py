@@ -1,4 +1,9 @@
 import random
+import json
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+HISTORY_FILE = BASE_DIR / "quiz_history.json"
 
 question_list = [
     {
@@ -423,7 +428,64 @@ def calculate_accuracy(total_questions, correct_answers):
     accuracy = (correct_answers/total_questions)*100
     return accuracy
 
-def main(question_list):
+def save_quiz_attempt(quiz_attempt):
+    
+    quiz_history = load_quiz_history()
+    quiz_history.append(quiz_attempt)
+
+    with open(HISTORY_FILE, "w") as file:
+        json.dump(quiz_history, file, indent=4)
+
+def display_quiz_history():
+    quiz_history = load_quiz_history()
+
+    if not quiz_history:
+        print("No quiz history found.")
+    else:
+        print("\n========== QUIZ HISTORY ==========")
+
+        for index, attempt in enumerate(quiz_history, start=1):
+            print(f"\nAttempt {index}")
+            print(f"Category: {attempt['category']}")
+            print(f"Difficulty: {attempt['difficulty']}")
+            print(f"Total Questions: {attempt['total_questions']}")
+            print(f"Correct Answers: {attempt['correct_answers']}")
+            print(f"Accuracy: {attempt['accuracy']:.2f}%")
+
+def load_quiz_history():
+    try:
+        with open(HISTORY_FILE, "r") as file:
+            quiz_history = json.load(file)
+        return quiz_history
+
+    except FileNotFoundError:
+        return []
+
+def display_dashboard():
+    quiz_history = load_quiz_history()
+
+    if not quiz_history:
+        print("No quiz data available. Complete a quiz first.")
+    else:
+        total_quizzes = len(quiz_history)
+        total_questions = sum(d.get('total_questions', 0) for d in quiz_history)
+        total_correct_answers = sum(d.get('correct_answers', 0) for d in quiz_history)
+        overall_accuracy = (total_correct_answers / total_questions) * 100
+
+        best_attempt = max(quiz_history, key=lambda x: x["accuracy"])
+
+        print("\n========== PERFORMANCE DASHBOARD ==========")
+        print(f"Total quizzes: {total_quizzes}")
+        print(f"Total questions: {total_questions}")
+        print(f"Total correct answers: {total_correct_answers}")
+        print(f"Overall accuracy: {overall_accuracy:.2f}%")
+
+        print("\n========== BEST PERFORMANCE ==========")
+        print(f"Category: {best_attempt['category']}")
+        print(f"Difficulty: {best_attempt['difficulty']}")
+        print(f"Accuracy: {best_attempt['accuracy']:.2f}%")
+
+def run_quiz(question_list):
     while True:
         category_list = get_categories(question_list)
         selected_category = select_category(category_list)
@@ -431,13 +493,51 @@ def main(question_list):
         difficulty_list = get_difficulties(category_questions)
         selected_difficulty = select_difficulty(difficulty_list)
         filtered_questions = filter_questions(category_questions, selected_difficulty)
+
         score = play_quiz(filtered_questions)
         display_results(filtered_questions, score)
-        question_count = count_questions_by_category(question_list, selected_category)
-        accuracy = calculate_accuracy(len(filtered_questions), correct_answers=score)
+
+        accuracy = calculate_accuracy(len(filtered_questions), score)
+        quiz_attempt = {
+            "category": selected_category,
+            "difficulty": selected_difficulty,
+            "total_questions": len(filtered_questions),
+            "correct_answers": score,
+            "accuracy": accuracy,
+        }
+        save_quiz_attempt(quiz_attempt)
+        print("Quiz attempt saved successfully.")
+
         should_replay = ask_replay()
         if should_replay is False:
             break
+
+
+def main(question_list):
+    while True:
+        print("\n========== QUIZ ENGINE ==========")
+        print("1. Start a new quiz")
+        print("2. View quiz history")
+        print("3. View performance dashboard")
+        print("4. Exit")
+
+        try:
+            menu_choice = int(input("Select an option: "))
+        except ValueError:
+            print("Please enter a valid number.")
+            continue
+
+        if menu_choice == 1:
+            run_quiz(question_list)
+        elif menu_choice == 2:
+            display_quiz_history()
+        elif menu_choice == 3:
+            display_dashboard()
+        elif menu_choice == 4:
+            print("Thanks for playing. Goodbye!")
+            break
+        else:
+            print("Please select an option between 1 and 4.")
 
 
 if __name__ == "__main__":
